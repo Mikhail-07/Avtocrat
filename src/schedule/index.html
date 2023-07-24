@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/styles/common.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./context/style.css"/>
+    <link rel="stylesheet" href="./booking/style.css"/>
+    <title>Document</title>
+</head>
+<body>
+  <script type="module">
+    import Schedule from './index.js';
+    import cars from '../assets/lib/cars.js';
+    import clients from '../assets/lib/clients.js';
+
+
+    const schedule = new Schedule(cars, clients, report);
+    document.body.append(schedule.elem);
+    schedule.timeline();
+    
+    for (const client of clients){ //поочередно берем клиента из базы 
+      schedule.getClientsList(client, schedule.month, schedule.year); //заполняем текущий месяц
+    }
+
+    schedule.initialScheduleState (clients, schedule.month, schedule.year);
+    schedule.renderContextMenu(); 
+  </script>    
+</body>
+</html>

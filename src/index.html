@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/styles/common.css">
+  <link rel="stylesheet" href="schedule/style.css">
+  <link rel="stylesheet" href="schedule/context/style.css"/>
+  <link rel="stylesheet" href="schedule/booking/style.css"/>
+  <title>Автократ</title>
+</head>
+
+<body>
+
+<main class="main">
+  <!-- <div class="progress-bar">
+    <div class="progress-bar__line"></div>
+  </div> -->
+  <aside class="sidebar">
+    <h2 class="sidebar__title">
+      <a href="/">Автократ</a>
+    </h2>
+    <ul class="sidebar__nav">
+      <li>
+        <a href="/" data-page="schedule">
+          <i class="icon-schedule"></i> <span>График</span>
+        </a>
+      </li>
+      <li>
+        <a href="/report" data-page="report">
+          <i class="icon-report"></i> <span>Отчет</span>
+        </a>
+      </li>
+    </ul>
+    <!-- <ul class="sidebar__nav sidebar__nav_bottom">
+      <li>
+        <button type="button" class="sidebar__toggler">
+          <i class="icon-toggle-sidebar"></i> <span>Toggle sidebar</span>
+        </button>
+      </li>
+    </ul> -->
+  </aside>
+  <section class="content" id="content">
+
+  </section>
+</main>
+
+<script type="module">
+  import Page from './schedule/index.js';
+  import cars from './assets/lib/cars.js';
+  import clients from './assets/lib/clients.js';
+  import report from '../assets/lib/report.js'
+
+  const contentNode = document.querySelector('#content');
+
+  function initialize () {
+    const page = new Page(cars, clients, report);
+    const element = page.elem;
+
+    contentNode.innerHTML = '';
+    contentNode.append(element);
+    page.timeline();
+    
+    for (const client of clients){ //поочередно берем клиента из базы 
+      page.getClientsList(client, page.month, page.year); //заполняем текущий месяц
+    }
+
+    page.initialScheduleState (clients, page.month, page.year);
+    page.renderContextMenu(); 
+  }
+
+  initialize();
+</script>
+</body>

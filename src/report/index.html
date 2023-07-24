@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import SortableTable from "./index.js";
+    import data from "./report.js";
+
+    const header = [
+      {
+        id: "date",
+        title: "Дата",
+        sortable: true,
+        sortType: "number",
+      },
+      {
+        id: "name",
+        title: "Имя клиента",
+        sortable: true,
+        sortType: "string",
+      },
+      {
+        id: "type",
+        title: "Тип",
+        sortable: true,
+        sortType: "number",
+      },
+      {
+        id: "car",
+        title: "Марка машины",
+        sortable: true,
+        sortType: "string",
+      },
+      {
+        id: "period",
+        title: "Период",
+        sortable: true,
+        sortType: "string",
+      },
+      {
+        id: "perDay",
+        title: "В сутки",
+        sortable: true,
+        sortType: "number",
+      }, 
+      {
+        id: "days",
+        title: "Дни",
+        sortable: true,
+        sortType: "number",
+      },
+      {
+        id: "total",
+        title: "Операция",
+        sortable: true,
+        sortType: "number",
+      },
+      {
+        id: "deposit",
+        title: "Залог",
+        sortable: true,
+        sortType: "number",
+      },
+    ];
+
+    const sortableTable = new SortableTable(header, { data });
+
+    root.append(sortableTable.element);
+  </script>
+</body>
