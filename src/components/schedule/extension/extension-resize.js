@@ -1,5 +1,4 @@
 import cellProperties from "../tools/cellProperties.js";
-import tooltip from "../../tooltip/index.js";
 
 export default class Resizer{
   
@@ -113,12 +112,20 @@ export default class Resizer{
     const { bottom } = this.td.getBoundingClientRect();
     this.tdBottom = bottom;
 
-    const template = this.tooltipRentExtensionTemplate(0);
+    const template = this.tooltipRentExtensionTemplate (0);
     this.createTooltip( event.pageX, this.tdBottom, template )
   }
 
   createTooltip( pageX, pageY, template ) {
-    this.tooltip = tooltip(pageX, pageY, template)
+    const div = document.createElement('div');
+    div.innerHTML = template;
+    div.style.position = 'absolute';
+    div.style.left = Math.round(pageX) + 'px';
+    div.style.top = Math.round(pageY) + 'px';
+    div.classList.add('menu');
+    document.body.append(div);
+    
+    this.tooltip = div;
   }
 
   moveResizer(event){
