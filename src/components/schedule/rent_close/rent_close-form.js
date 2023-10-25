@@ -1,4 +1,4 @@
-import cellProperties from "../cellProperties.js";
+import cellProperties from "../tools/cellProperties.js";
 import informationSeporator from "../../../assets/lib/information_seporator.js";
 import servicesData from "../../../data/services.js";
 

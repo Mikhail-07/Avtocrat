@@ -24,7 +24,7 @@ export default [
     sortType: "number",
   },
   {
-    id: "checkUp",
+    id: "nextCheckUp",
     title: "Ближайшее ТО",
     sortable: true,
     sortType: "number",

@@ -4,7 +4,7 @@ import Extension from '../extension/index.js';
 import Calculator from '../../calculator/index.js';
 import RibbonMenu from '../../ribbon_menu/index.js';
 import services from '../../../data/services.js';
-import cellProperties from '../cellProperties.js';
+import cellProperties from '../tools/cellProperties.js';
 
 export default function(){
   const { rentId } = cellProperties(this.appointment);

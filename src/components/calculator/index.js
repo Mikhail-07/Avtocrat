@@ -6,7 +6,6 @@ export default class Calculator{
 
   dependingDays = () => {
     const currentDays = days.value;
-    // this.rent.days = currentDays; !!!перезаписывает переменную в extension. Зачем это тут???
     perDay.value = this.perDay(currentDays, this.rent.rate);
     total.innerText = this.setTotal()
   }

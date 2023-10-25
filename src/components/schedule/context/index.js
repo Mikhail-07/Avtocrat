@@ -9,6 +9,53 @@ export default class Contextmenu{
 
   outClick = document.getElementById('out-click')
 
+  delete = () => {
+    this.td.removeAttribute("data-filling");
+    this.td.textContent = '';
+    this.td.classList.remove('schedule__fillingCell-booking');
+    this.close()
+  }
+
+  contractCreate = () => {
+    this.dispatch('client-card')
+  }
+
+  book = () => {
+    this.dispatch('booking-modal')
+  }
+
+  extension = () => {
+    this.dispatch('extension-modal')
+  }
+
+  extensionSpecific = () => {
+    this.dispatch('extension-specific')
+  }
+
+  rentClose = () => {
+    this.dispatch('rentClose-modal')
+  }
+
+  service = () => {
+    const li = this.elem.querySelector("[data-action='service']");
+    const yOffset = li.offsetTop;
+    const {width} = li.getBoundingClientRect();
+
+    const elem = document.createElement('div');
+    elem.innerHTML = this.template(['checkUp', 'Техническое обслуживание'], ['repair', 'Ремонт'], ['accident', 'ДТП']);
+    const servicesContext = elem.firstElementChild;
+    this.elem.append(servicesContext) 
+    servicesContext.style.top = `${yOffset}px`;
+    servicesContext.style.right = `${-width}px`;
+    setTimeout( () => servicesContext.classList.add('show'), 100)
+    this.initEventListeners(['checkUp', 'repair', 'accident'])
+  } 
+
+  clickOnServices = (e) => {
+    const id = e.target.closest('li').getAttribute('data-action')
+    this.dispatch('context-service', id)
+  }
+
   constructor(clickable = {}, li = []){
     this.clickable = clickable
     this.li = li
@@ -16,10 +63,10 @@ export default class Contextmenu{
     this.render()
   }
 
-  template(li = []){
+  template(...li){
     return /*html*/`
-    <ul id="menu" class="menu">
-      ${this.getList(li)}
+    <ul class="menu">
+      ${this.getList(...li)}
     </ul>`
   }
 
@@ -30,11 +77,19 @@ export default class Contextmenu{
         const id = this.td.firstElementChild.dataset.id;
         return `<a href="/clients/${id}">
           <li class="menu-item">
-            ${title}
+            <span>${title}</span>
           </li>
         </a>`
       } else {
-        return `<li class="menu-item" data-action="${action}">${title}</li>`  
+        return `
+          <li class="menu-item" data-action="${action}">
+            <span>${title}</span>
+            ${action === 'service' 
+              ? `<span class="sortable-table__sort-arrow">
+                  <span class="sortable-table__sort-arrow_options"></span>
+                </span>`
+              : '' }
+          </li>`  
       }  
     }).join('')
   }
@@ -50,13 +105,15 @@ export default class Contextmenu{
     let res
 
     if (!type){
-      res = this.getList(['book', 'Создать бронь']); //['service', 'Создать событие']
+      res = this.getList(['book', 'Создать бронь'], ['service', 'Создать событие']); //
       this.elem.innerHTML = res;
-      this.initEventListeners(['book']); //'service'
+      this.initEventListeners(['book', 'service']); //
       this.getModal(td);
       return
     };
     
+    if (type === 'broken') return
+
     if (type === 'book' ){
       res = this.getList(['contractCreate', 'Создать договор'], ['delete', 'Очистить ячейку']);
       this.elem.innerHTML = res;  
@@ -64,15 +121,15 @@ export default class Contextmenu{
     };
     
     if (type === 'paid'){
-      res = this.getList(['rentClose', 'Завершить аренду']) //['service', 'Создать событие']
+      res = this.getList(['rentClose', 'Завершить аренду'], ['service', 'Создать событие'])
       this.elem.innerHTML = res;
-      this.initEventListeners(['rentClose']) //'service' 
+      this.initEventListeners(['rentClose', 'service']) //'service' 
     }
 
     if (type === 'debt'){
-      res = this.getList(['rentClose', 'Завершить аренду'], ['extensionSpecific', 'Продлить по выбранный день']) //['service', 'Создать событие']
+      res = this.getList(['rentClose', 'Завершить аренду'], ['extensionSpecific', 'Продлить по выбранный день'], ['service', 'Создать событие']) 
       this.elem.innerHTML = res;
-      this.initEventListeners(['rentClose', 'extensionSpecific']) //'service'
+      this.initEventListeners(['rentClose', 'extensionSpecific', 'service']) //'service'
     }
 
     this.getModal(td);
@@ -100,54 +157,19 @@ export default class Contextmenu{
     action.forEach( item => {
       if (item === 'contractCreate') return
       const itemAction = this.elem.querySelector(`[data-action="${item}"]`);
-      itemAction.addEventListener('pointerdown', this[item]);  
+      if (item === 'checkUp' || item === 'repair' || item === 'accident') {
+        return itemAction.addEventListener('pointerdown', this.clickOnServices)
+      } else {
+        itemAction.addEventListener('pointerdown', this[item])
+      };  
     }); 
   }
 
-  delete = () => {
-    this.td.removeAttribute("data-filling");
-    this.td.textContent = '';
-    this.td.classList.remove('schedule__fillingCell-booking');
-    this.close()
-  }
-
-  contractCreate = () => {
-    const event = new CustomEvent('client-card', {
+  dispatch(name, id){
+    const event = new CustomEvent(name, {
+      detail: id,
       bubbles: true
-    });
-    this.elem.dispatchEvent(event);
-    console.log(event);
-    this.close()
-  }
-
-  book = () => {
-    const event = new CustomEvent('booking-modal', {
-      bubbles: true
-    });
-    this.elem.dispatchEvent(event);
-    this.close()
-  }
-
-  extension = () => {
-    const event = new CustomEvent('extension-modal', {
-      bubbles: true
-    });
-    this.elem.dispatchEvent(event);
-    this.close()
-  }
-
-  extensionSpecific = () => {
-    const event = new CustomEvent('extension-specific', {
-      bubbles: true
-    });
-    this.elem.dispatchEvent(event);
-    this.close()
-  }
-
-  rentClose = () => {
-    const event = new CustomEvent('rentClose-modal', {
-      bubbles: true
-    });
+    })
     this.elem.dispatchEvent(event);
     this.close()
   }

@@ -246,6 +246,14 @@ body {
   border-top: 4px solid var(--grey-light);
 }
 
+.sortable-table__sort-arrow_options {
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid var(--grey-light);
+}
+
 .sortable-table.sortable-table_loading {
   grid-template-columns: auto;
 }
@@ -305,15 +313,16 @@ body {
 /* forms styles */
 fieldset {
   border: none;
-  padding: 5px;
-  display: flex;
-  flex-flow: column;
 }
 
 .fieldset {
   padding: 5px;
   display: flex;
   flex-flow: column;
+}
+
+.form-services{
+  padding-bottom: 4px;
 }
 
 .fieldset-full-width{
@@ -330,6 +339,10 @@ fieldset {
 
 form .tel{
   position: relative;
+}
+
+.maintenance button{
+  width: -webkit-fill-available;
 }
 
 .button-add-tel{
@@ -372,12 +385,24 @@ form.form-grid {
   overflow: hidden;
 }
 
+.client-form {
+  display: flex;
+  gap: 50px;
+}
+
 form .inner {
   display: flex;
   flex-direction: row;
   position: relative;
+  height: 100%;
 
   transition: all 1s ease;
+}
+
+form .inner > div:nth-child(n+1) {
+  margin-left: 10px;
+  display: flex;
+  flex-flow: column;
 }
 
 form .form-group {
@@ -385,6 +410,7 @@ form .form-group {
   flex-direction: column;
   position: relative;
   margin-bottom: 10px;
+  height: fit-content;
 }
 
 form .form-group.has-error .form-control {
@@ -415,12 +441,16 @@ form .form-sort {
   align-items: center;
 }
 
+.icon-gear{
+  content: '';
+  width: 40px;
+}
+
 .price-label {
   font-weight: normal;
   font-size: 16px;
   line-height: 20px;
   color: var(--table-grey);
-  align-self: center;
 }
 
 form .radio-label {

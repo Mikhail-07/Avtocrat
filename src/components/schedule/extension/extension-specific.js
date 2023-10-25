@@ -1,4 +1,4 @@
-import cellProperties from "../cellProperties.js";
+import cellProperties from "../tools/cellProperties.js";
 
 export default function(){
   const { dateCell } = cellProperties(this.td);

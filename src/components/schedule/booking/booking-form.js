@@ -1,5 +1,6 @@
-import cellProperties from "../cellProperties";
+import cellProperties from "../tools/cellProperties";
 import informationSeporator from "../../../assets/lib/information_seporator";
+import bookOnSchedule from "./book-on-schedule";
 
 export default function(form){ 
   let clientId = ''
@@ -44,7 +45,7 @@ export default function(form){
   clientData.rents.push(rent);
   clientData.status = 'booked';
   
-  const div = this.putBookedOnMap(clientData, rent);
-  const scheduleCell = this.scheduleCellByRowAndCollumn(carId, from);
+  const div = bookOnSchedule(clientData, rent, this.cellWidth);
+  const scheduleCell = this.tdByRowAndCollumn(carId, from);
   scheduleCell.append(div);
 } 

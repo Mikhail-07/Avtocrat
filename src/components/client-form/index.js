@@ -46,8 +46,10 @@ clients = clients;
     const addDriver = document.createElement('div');
     addDriver.innerHTML = this.getAddDriverTemplate();
     const elem = addDriver.firstElementChild
-    const { inner, drivers } = this.subElem;
+    const { inner, drivers, addBtn } = this.subElem;
     drivers.append(elem);
+    addBtn.before(elem);
+
     elem.querySelector('.button-add-tel').onclick = this.onTelBtn;
 
     const innerWidth = inner.getBoundingClientRect().width;
@@ -100,8 +102,8 @@ clients = clients;
         <img src="../../assets/images/icons/angle-left-icon.svg" alt="icon">
       </div>
       <div class="inner" data-element="inner">
-        <div class="content-box">
-          <div class="form-allWidth" data-element="drivers">
+        <div class="content-box" data-element="drivers">
+          <div class="form-allWidth">
             <div class="form-group form-group__half_left">
               ${this.getClientContact(this.client)}
               ${this.getPassport(this.client)}
@@ -270,7 +272,7 @@ clients = clients;
 
   getAddDriverTemplate(){
     return /*html*/`
-      <div class="form-group form-group__half_left" data-element = "additionalDriver${this.counter}">
+      <div class="form-group form-group__half_left content-box" data-element = "additionalDriver${this.counter}">
         ${this.getClientContact()}
         ${this.getPassport()}
         ${this.getDriveLicense()}

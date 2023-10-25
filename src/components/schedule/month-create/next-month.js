@@ -36,7 +36,5 @@ export default function(headings, monthsRow, daysRow, bodyRow){
       row.append(td);
     }
   }
-  for (const client of this.clients){ //поочередно берем клиента из базы 
-    this.getClientsList(client, month, year)
-  }
+  this.getAppointments(month, year)
 } 

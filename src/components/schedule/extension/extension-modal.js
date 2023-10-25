@@ -1,7 +1,7 @@
 import Extension from './index.js';
 import Modal from '../../modal_window/index.js';
 import Calculator from '../../calculator/index.js';
-import cellProperties from '../cellProperties.js';
+import cellProperties from '../tools/cellProperties.js';
 
 export default function(days){ 
   const { rentId } = cellProperties(this.appointment);

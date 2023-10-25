@@ -1,15 +1,18 @@
-import ClientForm from "../../../components/client-form/index.js";
+import CarForm from "../../../components/car-form/index.js";
 import SortableTable from "../../../components/sortable-table/index.js";
 import headerConfig from "../../rental-report/list/header-config.js";
+import addCarData from "./add-car-data.js";
+import cars from "../../../data/cars.js"
 import clients from "../../../data/clients.js";
-import report from "../../../data/report-data.js";
+import reportData from "../../../data/report-data.js";
 
 export default class Page {
   element;
   subElements = {};
   components = {};
 
-  report = report;
+  reportData = reportData;
+  cars = cars;
   clients = clients;
 
   constructor(match) {
@@ -17,23 +20,17 @@ export default class Page {
   }
 
   initComponents () {
-    const [ productId ] = this.match[1];
-    const clientForm = new ClientForm(productId);
+    const carId = this.match[1];
 
-    const client = this.clients.find( element => element.id === productId)//ищем по id клиента в массиве clients;
-    const data = []
-    for (const rent of client.rents){
-      const result = this.report.filter((item) => item.id === rent.id);
-      result.forEach(element => {
-        data.push(element)
-      });
-      
-    }
-    console.log(data)
+    this.car = this.cars.find( element => element.id === carId)//ищем по id маишну в массиве cars;
+    
+    const carForm = new CarForm(this.car);
 
+    //добавлю все его операции и создаю историю поездок
+    const data = reportData.filter((item) => item.carId === carId);
     const sortableTable = new SortableTable(headerConfig, data, 'report')
 
-    this.components.clientForm = clientForm;
+    this.components.carForm = carForm;
     this.components.sortableTable = sortableTable;
   }
 
@@ -42,14 +39,12 @@ export default class Page {
     <div class="products-edit">
       <div class="content__top-panel">
         <h1 class="page-title">
-          <a href="/clients" class="link">Клиенты</a> / Добавить
+          <a href="/cars" class="link">Автомобили</a> / Добавить
         </h1>
       </div>
-      <div>
-        <div data-element="clientForm">
-          <!-- product-form component -->
-        </div>        
-      </div>
+      <div data-element="carForm">
+        <!-- product-form component -->
+      </div>        
 
       <h3 class="block-title">История поездок</h3>
 
@@ -69,8 +64,10 @@ export default class Page {
     this.subElements = this.getSubElements(this.element);
 
     this.initComponents();
-
     this.renderComponents();
+    
+    //отвечает за получение и обработку данных из карточки авто
+    this.getCarForm();
 
     return this.element;
   }
@@ -80,7 +77,6 @@ export default class Page {
       const root = this.subElements[component];
       const { elem } = this.components[component];
       root.append(elem);
-      console.log('too fast')
     });
   }
 
@@ -94,9 +90,20 @@ export default class Page {
     }, {});
   }
 
+  getCarForm(){ 
+    //получает данные из карты клиента   
+    document.body.addEventListener('car-form', this.addCarData)
+  }
+
+  addCarData = ({ detail: carForm }) => {
+    const func = addCarData.bind(this);
+    func(carForm);
+  }
+
   destroy () {
     for (const component of Object.values(this.components)) {
       component.destroy();
     }
+    document.body.removeEventListener('car-form', this.addCarData)
   }
 }

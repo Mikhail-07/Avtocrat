@@ -176,12 +176,16 @@
   padding: 34px 32px 48px;
   background-color: var(--white);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  margin-bottom: 24px;
   border-radius: 20px;
 }
 
 .content-box.content-box_small {
   padding: 16px 32px;
+  margin-bottom: 30px;
+}
+
+.maintenance > .content-box {
+  margin-bottom: 20px;
 }
 
 .progress-bar {

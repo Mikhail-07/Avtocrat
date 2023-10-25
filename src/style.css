@@ -1,3 +1,5 @@
+@import url("../src/assets/fonts/css/fontello.css");
+
 :root {
   --soft-grey: #e9edf1;
 }
@@ -57,7 +59,6 @@ background-color: white;
 }
 
 td {
-
 border: 1px solid var(--soft-grey);
 padding: 0 5px;
 height: 35px;
@@ -159,6 +160,7 @@ tr {
   display: flex;
   overflow: hidden;
   border-radius: 6px;
+  height: inherit;
 }
 
 .schedule__appointmentCell {
@@ -170,6 +172,7 @@ tr {
   margin-bottom: 2px;
   height: 30px;
   border-radius: 6px;
+  align-items: center;
 }
 
 .schedule__textCell-wrapper {
@@ -180,14 +183,13 @@ tr {
 }
 
 .schedule__textCell-content {
-  display: inline-block;
-  width: fit-content;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   position: sticky;
   left: 100px;
   padding: 4px 0;
+  display: inline-flex;
 }
 
 .schedule__fillingCell {
@@ -217,6 +219,12 @@ tr {
   background-color: rgba(204, 242, 246);
 }
 
+.schedule__fillingCell[data-filling = 'broken'] {
+  background-image: repeating-linear-gradient(45deg,  rgba(240, 244, 247),  rgba(240, 244, 247), transparent 5px, transparent 5px);
+  border: solid 1px rgba(85, 115, 130);
+  border-radius: inherit;
+}
+
 .schedule__fillingCell-sole {
   position: absolute;
   width: 100%;
@@ -235,6 +243,18 @@ tr {
 }
 .schedule__fillingCell[data-filling = 'vacant'] .schedule__fillingCell-sole {
   background-color: rgba(0, 176, 80);
+}
+.schedule__fillingCell[data-filling = 'broken'] .schedule__fillingCell-sole {
+  background-color: rgba(85, 115, 130);
+}
+
+.schedule__services-icon {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 20px;
+  margin-left: 3.5px;
+  padding-bottom: 2px;
 }
 
 .schedule__timeline-arrow {

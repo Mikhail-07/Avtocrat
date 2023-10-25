@@ -42,12 +42,12 @@ export default class MainPage {
         </li>
         <li>
           <a href="/clients" data-page="report">
-            <i class="icon-report"></i> <span>Клиенты</span>
+            <i class="icon-clients"></i> <span>Клиенты</span>
           </a>
         </li>
         <li>
           <a href="/cars" data-page="report">
-            <i class="icon-report"></i> <span>Автомобили</span>
+            <i class="icon-cars"></i> <span>Автомобили</span>
           </a>
         </li>
       </ul>
@@ -82,6 +82,7 @@ export default class MainPage {
       .addRoute(`^clients/add$`, 'clients/edit')
       .addRoute(`^clients/([\\w()-]+)$`, 'clients/edit')
       .addRoute(/^cars$/, 'cars/list')
+      .addRoute(`^cars/([\\w()-]+)$`, 'cars/edit')
       // .addRoute(new RegExp(`^${URL_PATH}sales$`), 'sales')
       // .addRoute(new RegExp(`^${URL_PATH}categories$`), 'categories')
       // .addRoute(/404\/?$/, 'error404')

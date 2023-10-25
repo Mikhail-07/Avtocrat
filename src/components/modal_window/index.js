@@ -1,5 +1,3 @@
-import svg from '../../assets/images/icons/cross-icon.svg'
-
 export default class Modal {
   
 

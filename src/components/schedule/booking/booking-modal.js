@@ -2,7 +2,7 @@ import Booking from './index.js';
 import Extension from '../extension/index.js';
 import Modal from '../../modal_window/index.js';
 import Calculator from '../../calculator/index.js';
-import cellProperties from "../cellProperties.js";
+import cellProperties from "../tools/cellProperties.js";
 
 export default function(td){ 
 

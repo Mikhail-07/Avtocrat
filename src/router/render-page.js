@@ -21,11 +21,7 @@ export default async function(path, match) {
   if (path === 'schedule'){
     const schedule = page.components.schedule
     schedule.timeline();
-    
-    for (const client of clients){ //поочередно берем клиента из базы 
-      schedule.getClientsList(client, schedule.month, schedule.year); //заполняем текущий месяц
-    }
-
+    schedule.getAppointments(schedule.month, schedule.year); //заполняем текущий месяц
     schedule.initialScheduleState (clients, schedule.month, schedule.year);
     schedule.renderContextMenu();
     schedule.initResizer();
