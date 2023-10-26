@@ -7,27 +7,22 @@
 /*resizer*/
 
 .container {
-	padding: 15px 15px 5px 15px;
+	padding: 0 15px;
 	cursor: pointer;
-	height: 20px;
 	box-sizing: content-box;
 }
 
 .line {
-  margin-top: -7px;
+  position: relative;
   width: 6px;
-  height: 15px;
+  height: 14px;
   border-radius: 20px;
   background-color: #ccc;
   transition: transform 300ms ease background-color 300ms ease;
 }
 
-.line-1 {
-  right: 50%;
-  margin-right: -(20px / 2);
-}
 .line-2 {
-  left: 50%;
+  bottom: 8px;
 }
 
 .container:hover .line-1,
@@ -123,7 +118,7 @@ tr {
 .resizer-r {
   cursor: pointer;
   height: 20px;
-  top: 14px;
+  top: 13px;
   border-radius: 20%;
   width: 6px;
 }

@@ -316,7 +316,7 @@ export default class Schedule{
     //CASE 1 случай, при котором аренда начинается и кончается в текущем месяце
     if ( from > this.eventfromDate && to < this.eventtoDate ){ 
       const d = rent.type === 'icon' ? from.getDate() : from.getDate() + 1;
-      const days = rent.type === 'icon' ? Math.ceil((to - from)/3600000/24) : rent.days;
+      const days = rent.type === 'icon' ? ((new Date(to.getFullYear(), to.getMonth(), to.getDate()) - new Date(from.getFullYear(), from.getMonth(), from.getDate()))/3600000/24) + 1 : rent.days;
 
       appointment = this.putClientOnMap(appointmentTextContent, filling, d, from.getMonth(), from.getFullYear(), days, rent); //вызываем метод наносящий аренду на график
       this.scheduleCell.append(appointment)
@@ -381,8 +381,8 @@ export default class Schedule{
   }
 
   checkingClientDebt(to, eventMonth){
-    let debt = Math.floor(((this.date - to)/3600000)/24);
-    if (debt > 0 && this.month >= eventMonth && (to.getMonth() + 1) <= this.month){ //!!!добавил ровно из-за бага при смене месяца!!!
+    let debt = Math.ceil(((this.date - to)/3600000)/24);
+    if (debt > 0 && this.month >= eventMonth && (to.getMonth() + 1) < this.month){ //!!!добавил ровно из-за бага при смене месяца!!!
       debt = this.debtAdjust( eventMonth, to, this.eventfromDate, this.eventtoDate )
     }; 
     return debt

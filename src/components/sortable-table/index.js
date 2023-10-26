@@ -96,7 +96,7 @@ export default class SortableTable {
       if (id === 'period' && (item.type === 'rent' || item.type === 'extension')){
         const from = new Date (item.from);
         const to = new Date (item.to);
-        return `<div class="sortable-table__cell">${("0" + from.getDate()).slice(-2)}.${("0" + from.getMonth()).slice(-2)} - ${("0" + to.getDate()).slice(-2)}.${("0" + to.getMonth()).slice(-2)}</div>`
+        return `<div class="sortable-table__cell">${("0" + from.getDate()).slice(-2)}.${("0" + (from.getMonth() + 1)).slice(-2)} - ${("0" + to.getDate()).slice(-2)}.${("0" + (to.getMonth() + 1)).slice(-2)}</div>`
       }
 
       return item[id] 

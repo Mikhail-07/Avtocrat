@@ -41,7 +41,7 @@ export default [
     id: "period",
     title: "Период",
     sortable: false,
-    sortType: "string",
+    sortType: "string"
   },
   {
     id: "perDay",
