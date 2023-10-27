@@ -75,11 +75,18 @@ export default class SortableTable {
   getTableRows(data){
 
     return data.map((item) => {
+      if (this.tableName === 'report'){
+        return /*html*/`
+        <div class="sortable-table__row ${this.tableName}">
+          ${this.getTableRow(item)}
+        </div>`
+      } else {
         return /*html*/`
         <a href="/${this.tableName}/${item.id}" class="sortable-table__row ${this.tableName}">
           ${this.getTableRow(item)}
         </a>` 
-    }).join('');
+      }
+    }).join(''); 
   }
 
   getTableRow(item){

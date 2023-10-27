@@ -45,7 +45,7 @@ clients = clients;
     return /*html*/`
     <div class="client-form">
       <form data-element="carForm">
-        <div class="  " data-element="inner">
+        <div class="inner" data-element="inner">
           <div class="content-box">
             <div class="form-allWidth">
               <div class="form-group form-group__half_left">
