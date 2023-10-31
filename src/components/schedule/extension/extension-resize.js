@@ -1,4 +1,5 @@
 import cellProperties from "../tools/cellProperties.js";
+import textCropping from "../tools/textCropping.js";
 
 export default class Resizer{
   
@@ -151,6 +152,7 @@ export default class Resizer{
     }
 
     if(!this.resizer.classList.contains('resizer_dragging')) this.resizer.classList.add('resizer_dragging');
+    textCropping(this.appointment)
   }
 
   tooltipUpdate( pageX, pageY, template ) {
@@ -176,7 +178,10 @@ export default class Resizer{
     this.bodyRow.addEventListener('pointermove', this.searchResizableElement);
     this.tooltip.remove();
 
-    if (days > 0) this.extension(days, this.appointmentPaidCell, this.appointmentDebtCell, this.resizer)
+    if (days > 0) {
+      this.extension(days, this.appointmentPaidCell, this.appointmentDebtCell, this.resizer);
+    }
+    textCropping(this.appointment)
   }
 
   extension (days, appointmentPaidCell, appointmentDebtCell, resizer) {

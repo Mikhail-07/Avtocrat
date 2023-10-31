@@ -1,4 +1,4 @@
-import informationSeporator from "../../../assets/lib/information_seporator.js";
+import informationSeporator from "../../../components/schedule/tools/information_seporator.js"
 import Router from "../../../router/index.js";
 
 

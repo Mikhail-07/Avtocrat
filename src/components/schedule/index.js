@@ -3,7 +3,8 @@
 
 import createAppointment from './tools/createAppointment';
 import cellProperties from './tools/cellProperties.js';
-import createFillingCell from './tools/createFillingCell.js'
+import createFillingCell from './tools/createFillingCell.js';
+import textCropping from './tools/textCropping';
 
 import Contextmenu from './context/index.js';
 
@@ -40,7 +41,7 @@ export default class Schedule{
 
   date = new Date(); // сегодняшняя дата
   day = this.date.getDate(); // какой сегодня день по счету
-  month = parseInt(this.date.getMonth()) + 1;
+  month = parseInt(this.date.getMonth());
   year = this.date.getFullYear();
   days = 0; //дней в текущем месяце
   cellWidth = 40; //ширина ячейки
@@ -156,22 +157,22 @@ export default class Schedule{
   }
 
   template(){
+    this.days = this.daysAmount(this.year, this.month); //получаем кол-во дней в месяце
+
     return /*html*/`
     <div class="schedule-wrapper">
       <div id="out-click"></div>
       <table data-element="table" id="schedule">
-        ${this.getDateHeader(this.year, this.month)}
+        ${this.getDateHeader(this.year, this.month, this.days)}
         <tbody data-element = "bodyRow">
-          ${this.getCarsList()}
+          ${this.getCarsList(this.days)}
         </tbody>
     </table>
     </div>
     `
   } 
 
-  getDateHeader(year, month){
-    const daysAmount = this.daysAmount(year, month); //получаем кол-во дней в месяце
-
+  getDateHeader(year, month, daysAmount){
     return /*html*/`
     <thead>
       <tr data-element = "monthsRow">
@@ -189,7 +190,7 @@ export default class Schedule{
   }
 
   getHeaderMonth(year, month, daysAmount){
-    const d = new Date (year, month - 1);
+    const d = new Date (year, month);
     const monthName = d.toLocaleString('ru', { month: 'long' });
 
     return /*html*/ `
@@ -216,7 +217,7 @@ export default class Schedule{
     // находим кол-во дней в месяце
     let counter = 0;
     let day = 0;
-    const d = new Date (year, month - 1);
+    const d = new Date (year, month);
     const currentMonth = d.getMonth();
     while (d.getMonth() === currentMonth){
       counter++
@@ -224,16 +225,15 @@ export default class Schedule{
       d.setDate(day)
     }
 
-    this.days = counter
-    return this.days
+    return counter
   }
 
-  getCarsList(){
+  getCarsList(daysAmount){
     return this.cars.map((item) =>{
       return /*html*/`
       <tr>
           <td class="schedule__cars sticky__left sleeper-cell" data-car-id="${item.id}">${item.plate}</td>
-          ${'<td></td>'.repeat(this.days)}
+          ${'<td></td>'.repeat(daysAmount)}
       </tr>`
     }).join('')
   }
@@ -245,50 +245,53 @@ export default class Schedule{
   getAppointments(eventMonth, eventYear){
     this.setBeginningAndEndOfEventhMonth(eventMonth, eventYear)
 
-    this.getClientsList(eventMonth);
-    this.getIconsList(eventMonth);
+    this.getClientsList(eventMonth, eventYear);
+    this.getIconsList(eventMonth, eventYear);
   }
 
   setBeginningAndEndOfEventhMonth(eventMonth, eventYear){
-    this.eventfromDate = new Date (eventYear, parseInt(eventMonth) - 1); //месяц который отрисовываем
-    this.eventtoDate = new Date (eventYear, parseInt(eventMonth) - 1, this.days);  
+    this.eventfromDate = new Date (eventYear, parseInt(eventMonth)); //месяц который отрисовываем
+    this.eventtoDate = new Date (eventYear, parseInt(eventMonth), this.daysAmount(eventYear, eventMonth));  
   }
 
-  getClientsList(eventMonth){  //заполняем график клинетами 
+  getClientsList(eventMonth, eventYear){  //заполняем график клинетами 
     for (const client of this.clients){ //поочередно берем клиента из базы 
       const { rents } = client;
       for (const rent of rents){ //поочередно берем аренды клиента
         // if (debt > 0){
         //   console.log(`${client.name} is debtor. Debt amount: ${debt}`)      
         // };
-        this.appointmentSwitcher(rent, eventMonth, client)
+        this.appointmentSwitcher(rent, eventMonth, eventYear, client)
       }
     }
   }
 
   //отображает иконки
-  getIconsList(eventMonth) {
+  getIconsList(eventMonth, eventYear) {
     for ( const icon of iconsData ){
-      this.appointmentSwitcher(icon, eventMonth)
+      this.appointmentSwitcher(icon, eventMonth, eventYear)
     }
   }
 
-  appointmentSwitcher(rent, eventMonth, client) {
+  appointmentSwitcher(rent, eventMonth, eventYear, client) {
     let appointment;
     let appointmentTextContent;
     let filling;
 
-    const from = new Date (rent.from); //начало аренды
-    let to
+    const fromFullDate = new Date (rent.from)
+    const from = new Date (fromFullDate.getFullYear(), fromFullDate.getMonth(), fromFullDate.getDate()); //начало аренды
+
+    let toFullDate
     if (!rent.to){
       if ( from > this.date ){
-        to = new Date (rent.from);
+        toFullDate = new Date (rent.from);
       } else {
-        to = this.date
+        toFullDate = this.date
       }
     } else {
-      to = new Date (rent.to);
+      toFullDate = new Date (rent.to);
     }
+    const to = new Date (toFullDate.getFullYear(), toFullDate.getMonth(), toFullDate.getDate())
 
     const debt = this.checkingClientDebt(to, eventMonth)
 
@@ -303,7 +306,8 @@ export default class Schedule{
 
     //Booking
 
-    if ( rent.status === 'booked' && ( this.eventfromDate < rent.tableDate && rent.tableDate < this.eventtoDate )){
+    if (rent.status === 'booked')
+      if ( this.eventfromDate <= rent.tableDate && rent.tableDate <= this.eventtoDate ){
       const date = new Date(rent.tableDate);
       const scheduleCell = this.tdByRowAndCollumn(rent.carId, date);
       const bookDiv = bookOnSchedule(client, rent, this.cellWidth);
@@ -314,33 +318,34 @@ export default class Schedule{
     if ( rent.status === 'booked' ) return
 
     //CASE 1 случай, при котором аренда начинается и кончается в текущем месяце
-    if ( from > this.eventfromDate && to < this.eventtoDate ){ 
+    if ( from >= this.eventfromDate && to <= this.eventtoDate ){ 
       const d = rent.type === 'icon' ? from.getDate() : from.getDate() + 1;
-      const days = rent.type === 'icon' ? ((new Date(to.getFullYear(), to.getMonth(), to.getDate()) - new Date(from.getFullYear(), from.getMonth(), from.getDate()))/3600000/24) + 1 : rent.days;
+      const days = rent.type === 'icon' ? ((to - from)/3600000/24) + 1 : rent.days;
 
-      appointment = this.putClientOnMap(appointmentTextContent, filling, d, from.getMonth(), from.getFullYear(), days, rent); //вызываем метод наносящий аренду на график
+      appointment = this.putClientOnMap(appointmentTextContent, filling, d, from.getMonth(), eventYear, days, rent); //вызываем метод наносящий аренду на график
       this.scheduleCell.append(appointment)
       if ( rent.status === 'open' && debt >= 0 && rent.type != 'icon' ) { // debt < this.days - на случай, если это аренда с долгом из CASE 4
         this.debtor( debt, appointment, client.name ) 
       }
       
-      this.textСropping(appointment)
+      textCropping(appointment)
     }
 
     //CASE 2 случай "переходящей" аренды с прошлого месяца на нынешний
-    if ( from < this.eventfromDate && to > this.eventfromDate ){
+    if ( from < this.eventfromDate && to >= this.eventfromDate ){
 
       let days
-      let m = eventMonth - 1;
+      let m = eventMonth;
       let d = 1 //наношу аренду с первой ячейки, так как договор заключен в прошлом месяце
 
       const restOfDays = Math.floor(((to - this.eventfromDate)/3600000/24) + 1); //кол-во дней в текущем месяце
       restOfDays > this.days ? days = this.days : days = restOfDays; // если кол-во ячеек больше, чем остаток дней в месяце, то закрашиваем клетки на максимальное кол-во дней в месяце
     
-      appointment = this.putClientOnMap(appointmentTextContent, filling, d, m, from.getFullYear(), days, rent);
+      appointment = this.putClientOnMap(appointmentTextContent, filling, d, m, eventYear, days, rent);
 
-      const previousMonth = this.subElements.table.rows[0].querySelector(`[data-list-id="${eventMonth - 1}.${this.year}"]`)//проверка сущетсвет, ли прошлый месяц, если нет, то отрисовывем в нем аренду
-      if( parseInt(eventMonth) - 1 <= to.getMonth() && !previousMonth ){ //Не переносилась аренда на ИЮНЬ. добавил =
+      const date = new Date (eventYear, eventMonth - 1) // вычисляю предыдущий месяц
+      const previousMonth = this.subElements.table.rows[0].querySelector(`[data-list-id="${date.getMonth()}.${date.getFullYear()}"]`)//проверка сущетсвет, ли прошлый месяц, если нет, то отрисовывем в нем аренду
+      if( date <= to && (!previousMonth || from.getDate() === this.daysAmount(eventYear, eventMonth - 1))){ //Не переносилась аренда на ИЮНЬ. добавил =
         this.scheduleCell.append(appointment);
       }
       //!!!убрал ровно из-за бага при смене месяца!!!
@@ -348,6 +353,8 @@ export default class Schedule{
       if (debt > 0 && this.month >= eventMonth && rent.type != 'icon'){ //дополняет дни долга, если событийный месяц (eventMonth) идет до нынешнего месяца 
         this.debtor( debt, appointment, client.name )
       }
+
+      textCropping(appointment)
     }
 
     //CASE 3 случай "переходящей" аренды с нынешнего месяца на следущий
@@ -358,19 +365,21 @@ export default class Schedule{
       const restOfDays = Math.ceil((this.eventtoDate - from)/3600000/24); //считаю сколько ячеек нужно закрыть от начала до конца
       days = rent.type === 'icon' ? restOfDays + 1 : restOfDays;
       const d = rent.type === 'icon' ? from.getDate() : from.getDate() + 1;
-      appointment = this.putClientOnMap(appointmentTextContent, filling, d, from.getMonth(), from.getFullYear(), days, rent); 
+      appointment = this.putClientOnMap(appointmentTextContent, filling, d, from.getMonth(), eventYear, days, rent); 
       this.scheduleCell.append(appointment);
+
+      textCropping(appointment)
     }
 
     //CASE 4 случай "переходящей" аренды с прошлого месяца на нынешний с долгом
     if ( from < this.eventfromDate && to < this.eventfromDate  && rent.status === 'open' && this.eventfromDate < this.date){ 
   
       let d = 1;
-      let m = eventMonth - 1;
+      let m = eventMonth;
       let days = debt;
       filling = 'debt';
 
-      appointment = this.putClientOnMap(appointmentTextContent, filling, d, m, from.getFullYear(), days, rent);  
+      appointment = this.putClientOnMap(appointmentTextContent, filling, d, m, eventYear, days, rent);  
 
       if( eventMonth <= this.month ){
         this.scheduleCell.append(appointment)
@@ -381,25 +390,18 @@ export default class Schedule{
   }
 
   checkingClientDebt(to, eventMonth){
-    let debt = Math.ceil(((this.date - to)/3600000)/24);
-    if (debt > 0 && this.month >= eventMonth && (to.getMonth() + 1) < this.month){ //!!!добавил ровно из-за бага при смене месяца!!!
+    let debt = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate()) - to;
+    if (debt > 0 && this.month >= eventMonth && to.getMonth() <= this.month){ //!!!добавил ровно из-за бага при смене месяца!!!
       debt = this.debtAdjust( eventMonth, to, this.eventfromDate, this.eventtoDate )
     }; 
     return debt
-  }
-
-  textСropping(appointment) {
-    if (appointment.tagName === 'IMG') return
-    const appointmentWidth = appointment.getBoundingClientRect().width;
-    const textContentWidth = appointment.querySelector('span').getBoundingClientRect().width;
-    if (textContentWidth > appointmentWidth) appointment.querySelector('span').style.width = appointmentWidth -5 + 'px';
   }
 
   debtAdjust( eventMonth, to ){ 
     let debtThisMonth //корректирует кол-во дней долга. Если эти дни превышают кол-во дней в месяце, то долг принимается за дни в месяце.
     
     if ( this.month === eventMonth && this.eventfromDate < to){
-      debtThisMonth = Math.ceil((((this.date - to)/3600000)/24)) - 1 //заменил this.eventfromDate на to
+      debtThisMonth = (((new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate()) - to)/3600000)/24) //заменил this.eventfromDate на to
     }
 
     if ( this.month === eventMonth && to < this.eventfromDate){
@@ -475,7 +477,7 @@ export default class Schedule{
     
     const row = this.subElements.table.querySelector(`[data-car-id='${car}']`).closest('tr'); //(1)
     const rowInd = row.rowIndex;
-    const cell = this.subElements.table.querySelector(`[data-day="${date.getDate()}"][data-month="${date.getMonth() + 1}"][data-year="${date.getFullYear()}"]`); //(2)
+    const cell = this.subElements.table.querySelector(`[data-day="${date.getDate()}"][data-month="${date.getMonth()}"][data-year="${date.getFullYear()}"]`); //(2)
     const cellInd = cell.cellIndex;
     this.scheduleCell = this.subElements.table.rows[rowInd].cells[cellInd]; //ячейка клиента
     return this.scheduleCell

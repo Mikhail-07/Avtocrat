@@ -9,7 +9,7 @@ export default function(td){
   const { carId, dateCell} = cellProperties(td);
 
   const from = new Date(dateCell.dataset.year, dateCell.dataset.month, dateCell.dataset.day);
-  const fromRFC = `${from.getFullYear()}-${("0" + from.getMonth()).slice(-2)}-${("0" + from.getDate()).slice(-2)}`;
+  const fromRFC = `${from.getFullYear()}-${("0" + (from.getMonth() + 1)).slice(-2)}-${("0" + from.getDate()).slice(-2)}`;
   const to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 1);
   const toRFC = `${to.getFullYear()}-${("0" + to.getMonth()).slice(-2)}-${("0" + to.getDate()).slice(-2)}`;
 

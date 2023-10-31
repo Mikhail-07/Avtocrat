@@ -1,4 +1,4 @@
-import dateHandler from "../../../assets/lib/date_handler"
+import dateHandler from "../../schedule/tools/date_handler.js"
 
 export default class Extension {
 

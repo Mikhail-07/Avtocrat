@@ -1,5 +1,4 @@
 import cars from "../../../data/cars.js";
-import informationSeporator from "../../../assets/lib/information_seporator.js";
 
 
 export default function(carForm){

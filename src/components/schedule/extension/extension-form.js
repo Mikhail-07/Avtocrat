@@ -1,5 +1,6 @@
 import cellProperties from "../tools/cellProperties.js";
-import informationSeporator from "../../../assets/lib/information_seporator.js";
+import textCropping from "../tools/textCropping.js";
+import informationSeporator from "../tools/information_seporator.js";
 import Router from "../../../router/index.js";
 
 export default function(form){ 
@@ -37,6 +38,7 @@ export default function(form){
       appointmentDebtCell.style.width = `${wDebt - (this.cellWidth * days)}px`;
     }
     if (resizer) resizer.style.left = `${wPaid + (this.cellWidth * days) - this.resizerWidth}px`;
+    textCropping(this.appointment)
   } else {
     const router = Router.instance();
     router.navigate('/')

@@ -6,7 +6,7 @@ export default function(){
   const { client } = this.findClientById(rentId);
   const personalRent = client.rents.find(item => item.id === rentId);
   
-  const tdDate = new Date (dateCell.dataset.year, parseInt(dateCell.dataset.month) - 1, dateCell.dataset.day); //дата ячейки
+  const tdDate = new Date (dateCell.dataset.year, dateCell.dataset.month, dateCell.dataset.day); //дата ячейки
   const days = Math.ceil(((tdDate.getTime() - personalRent.to)/3600000)/24);
   const appointmentPaidCell = this.appointment.querySelector('[data-filling="paid"]');
   const appointmentDebtCell = this.appointment.querySelector('[data-filling="debt"]');

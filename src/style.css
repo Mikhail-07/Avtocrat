@@ -173,7 +173,7 @@ tr {
 .schedule__textCell-wrapper {
   position: absolute;
   width: 100%;
-  padding: 0 6px;
+  padding: 0 15px 0 6px;
   z-index: 3;
 }
 
@@ -184,7 +184,8 @@ tr {
   position: sticky;
   left: 100px;
   padding: 4px 0;
-  display: inline-flex;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .schedule__fillingCell {
@@ -218,6 +219,7 @@ tr {
   background-image: repeating-linear-gradient(45deg,  rgba(240, 244, 247),  rgba(240, 244, 247), transparent 5px, transparent 5px);
   border: solid 1px rgba(85, 115, 130);
   border-radius: inherit;
+  background-color: white;
 }
 
 .schedule__fillingCell-sole {

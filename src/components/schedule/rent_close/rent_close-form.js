@@ -1,6 +1,5 @@
 import cellProperties from "../tools/cellProperties.js";
-import informationSeporator from "../../../assets/lib/information_seporator.js";
-import servicesData from "../../../data/services.js";
+import informationSeporator from "../tools/information_seporator.js";
 
 export default function(form){ 
   const formData = Object.fromEntries(form.entries()); // преобразуем extensionForm в объект

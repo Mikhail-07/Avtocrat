@@ -1,5 +1,5 @@
 import cellProperties from "../tools/cellProperties";
-import informationSeporator from "../../../assets/lib/information_seporator";
+import informationSeporator from "../tools/information_seporator.js";
 import bookOnSchedule from "./book-on-schedule";
 
 export default function(form){ 
@@ -35,17 +35,14 @@ export default function(form){
   rent.days = rentData.days;
   rent.status = 'booked';
 
-  const from = new Date (formData.from);
-  from.setHours(hh);
-  from.setMinutes(mm);
-  rent.from = from.getTime();
+  rent.from = date.getTime();
   rent.to = rent.from + rentData.days*24*3600*1000;
-  rent.tableDate = from;
+  rent.tableDate = new Date (date.getFullYear(), date.getMonth(), date.getDate() + 1).getTime();
   
   clientData.rents.push(rent);
   clientData.status = 'booked';
   
   const div = bookOnSchedule(clientData, rent, this.cellWidth);
-  const scheduleCell = this.tdByRowAndCollumn(carId, from);
+  const scheduleCell = this.tdByRowAndCollumn(carId, new Date (date.getFullYear(), date.getMonth(), date.getDate() + 1));
   scheduleCell.append(div);
 } 
