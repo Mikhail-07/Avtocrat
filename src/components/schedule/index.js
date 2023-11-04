@@ -400,7 +400,7 @@ export default class Schedule{
   debtAdjust( eventMonth, to ){ 
     let debtThisMonth //корректирует кол-во дней долга. Если эти дни превышают кол-во дней в месяце, то долг принимается за дни в месяце.
     
-    if ( this.month === eventMonth && this.eventfromDate < to){
+    if ( this.month === eventMonth && this.eventfromDate <= to){
       debtThisMonth = (((new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate()) - to)/3600000)/24) //заменил this.eventfromDate на to
     }
 

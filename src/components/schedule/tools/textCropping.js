@@ -4,5 +4,5 @@ export default function (appointment){
     const textContent = appointment.querySelector('span');
     textContent.style.width = 'auto';
     const textContentWidth = textContent.getBoundingClientRect().width;
-    if (textContentWidth > appointmentWidth) textContent.style.width = appointmentWidth + 'px';   
+    if (textContentWidth > appointmentWidth) textContent.style.width = appointmentWidth - 20 + 'px';   
 }
